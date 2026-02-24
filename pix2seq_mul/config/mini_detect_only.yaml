@@ -1,0 +1,57 @@
+data:
+  num_classes: 80
+  max_instances: 100
+  max_person_per_image: 30      # 暂时不用关键点也无妨
+  class_label_corruption: "none"
+  image_size: 384               # 降低分辨率，加快拨测
+  jitter_scale: [1.0, 1.0]      # 拨测先不做尺度抖动
+  color_jitter_strength: 0.0    # 拨测先不做颜色抖动
+
+tokenization:
+  quantization_bins: 1000
+  noise_bbox_weight: 0.0
+  eos_token_weight: 0.2         # 提高“不开局就发 EOS”的难度
+  mix_rate: 0.5
+  random_ordering: false
+
+model:
+  patch_size: 16
+  num_encoder_layers: 6
+  num_decoder_layers: 6
+  d_model: 256
+  nhead: 8
+  dim_feedforward: 1024
+  dropout: 0.1
+  drop_path: 0.1
+  shared_decoder_embedding: true
+  decoder_output_bias: true
+  pad_token_id: 0
+  bos_token_id: 1
+  eos_token_id: 2
+  llama_model: false            # 拨测先用标准 Pix2SeqModel，更稳
+  pretrained_path:
+
+training:
+  output_dir: "./outputs"
+  predictions_dir: "predictions"
+  num_epochs: 3                 # 拨测 2-3 个 epoch 即可
+  max_steps:
+  batch_size: 8
+  eval_batch_size: 8
+  gradient_accumulation_steps: 1
+  gradient_clip_value: null
+  learning_rate: 0.0003         # 小 batch 下更稳一些
+  weight_decay: 0.05
+  warmup_epochs: 1
+  beta1: 0.9
+  beta2: 0.999
+  eps: 1.0e-8
+  run_eval_freq: 1              # 每轮都评估
+  overfit_eval_set: false       # 正常训练，不用 val 当 train
+  num_visualizations: 4
+  use_wsd_scheduler: false      # 拨测先关
+
+generation:
+  top_p: 0.0                    # 贪心
+  top_k: 1                      # 贪心
+  temperature: 1.0

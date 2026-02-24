@@ -1,0 +1,63 @@
+data:
+  num_classes: 80
+  max_tubes_per_clip: 30  # 最大目标数
+  persons_per_clip: 2  # 每张图片最大人数
+  tube_frames: 8
+  num_keypoints: 16
+  class_label_corruption: "rand_n_fake_cls"
+  image_size: 512  # image_size: 640
+  jitter_scale: [0.3, 2.0]  # 随即缩放比例
+  color_jitter_strength: 0.5  # 颜色抖动强度
+
+tokenization:
+  quantization_bins: 1000  # 坐标映射单元数量
+  eos_token_weight: 0.1  # EOS损失位置权重
+  mix_rate: 0.5  # 混合策略比例
+  random_ordering: true  # 随机化框序
+
+model:
+  patch_size: 16  # ViT patch 大小
+  num_encoder_layers: 6  # 编/解码层数
+  num_decoder_layers: 6
+  d_model: 256  # Transformer 的通道宽度
+  nhead: 8  # 注意力头数量
+  dim_feedforward: 1024  # FFN 隐层宽度
+  dropout: 0.1
+  drop_path: 0.1
+  shared_decoder_embedding: true  # 解码器的输入/输出 embedding 是否共享
+  decoder_output_bias: true  # 解码器输出层是否包含 bias
+  pad_token_id: 0  # 特殊Tokenid
+  bos_token_id: 1
+  eos_token_id: 2
+  llama_model: true  # 选择 LLaMA-风格的解码器，通常带有更好的解码与推理接口
+  pretrained_path:   # 可选加载预训练权重
+
+training:
+  output_dir: "./outputs"
+  predictions_dir: "predictions"
+  num_epochs: 200
+  max_steps: null  # 最大步数
+  # batch_size: 64
+  # eval_batch_size: 50
+  batch_size: 4
+  eval_batch_size: 2
+  det_loss_weight: 1 
+  kp_loss_weight: 1
+  act_loss_weight: 0.2
+  gradient_accumulation_steps: 1  # 梯度累计步数 ？
+  gradient_clip_value: null  # 梯度裁剪阈值 ？ 
+  learning_rate: 0.0003
+  weight_decay: 0.05
+  warmup_epochs: 2
+  beta1: 0.9
+  beta2: 0.95
+  eps: 0.00000001
+  run_eval_freq: 10  # 每隔多少个 epoch 评估/可视化一次。
+  overfit_eval_set: false  # 设为 true 时用验证集做小样本过拟合调试（
+  num_visualizations: 5  # 每次评估保存可视化图像张数
+  use_wsd_scheduler: true  
+
+generation:
+  top_p: 0.4  # 核采样
+  top_k: 0
+  temperature: 1.0
